@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Veri Kayıt Uygulaması</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background: #f7f7f7;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    ul {
+      text-align: left;
+      max-width: 500px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Veri Giriş Formu</h1>
+  
+  <input type="date" id="tarih"><br>
+  <input type="number" id="sayi" placeholder="Sayı gir"><br>
+  <input type="text" id="aciklama" placeholder="Açıklama (isteğe bağlı)"><br>
+  <button onclick="kaydetVeri()">Kaydet</button>
+
+  <hr>
+  <h2>Bu Ayın Kayıtları</h2>
+  <ul id="liste"></ul>
+
+  <script>
+    function kaydetVeri() {
+      const tarih = document.getElementById('tarih').value;
+      const sayi = document.getElementById('sayi').value;
+      const aciklama = document.getElementById('aciklama').value;
+
+      if (!tarih || !sayi) {
+        alert("Tarih ve sayı girilmelidir.");
+        return;
+      }
+
+      const ay = tarih.slice(0, 7); // Örn: "2025-07"
+      const kayit = { tarih, sayi, aciklama };
+      
+      let veriler = JSON.parse(localStorage.getItem(ay)) || [];
+      veriler.push(kayit);
+      localStorage.setItem(ay, JSON.stringify(veriler));
+
+      document.getElementById('tarih').value = '';
+      document.getElementById('sayi').value = '';
+      document.getElementById('aciklama').value = '';
+
+      listeyiGoster();
+    }
+
+    function listeyiGoster() {
+      const liste = document.getElementById('liste');
+      liste.innerHTML = '';
+
+      const simdikiAy = new Date().toISOString().slice(0, 7); // Örn: 2025-07
+      const veriler = JSON.parse(localStorage.getItem(simdikiAy)) || [];
+
+      veriler.forEach(k => {
+        const li = document.createElement('li');
+        li.textContent = `${k.tarih} - ${k.sayi} (${k.aciklama})`;
+        liste.appendChild(li);
+      });
+    }
+
+    listeyiGoster();
+  </script>
+</body>
+</html>
